@@ -12,23 +12,30 @@ public class AnimeController {
 
     @GetMapping("/nomeAnimes")
     public List<Anime> listAll() {
-        return Anime.listAllAnimes();
+        return Anime.getAllAnimes();
     }
 
     @GetMapping("/filterList")
     public List<Anime> listAllFiltered(@RequestParam String name) {
-       var animes = Anime.listAllAnimes();
+       var animes = Anime.getAllAnimes();
        if(name == null) return animes;
 
-       return animes.stream().filter(anime -> anime.getName().equalsIgnoreCase(name)).toList();
+       return animes.stream()
+               .filter(anime -> anime.getName().equalsIgnoreCase(name))
+               .toList();
     }
 
     @GetMapping("{id}")
     public Anime findById(@PathVariable Long id) {
-        return Anime.listAllAnimes()
+        return Anime.getAllAnimes()
                 .stream()
                 .filter(anime -> anime.getId().equals(id))
                 .findFirst().orElse(null);
 
+    }
+
+    @PostMapping
+    public Anime createAnime(@RequestBody(required = false) Anime anime) {
+        return Anime.addAnime(anime.getName());
     }
 }
