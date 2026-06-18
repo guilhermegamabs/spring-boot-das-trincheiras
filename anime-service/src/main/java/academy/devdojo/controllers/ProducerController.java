@@ -1,6 +1,9 @@
 package academy.devdojo.controllers;
 
 import academy.devdojo.domain.Producer;
+import academy.devdojo.dto.ProducerPostRequest;
+import academy.devdojo.response.ProducerGetResponse;
+import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -8,12 +11,14 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 @RequestMapping("v1/producers")
 @RestController
 @Slf4j
+@Builder
 public class ProducerController {
 
     @GetMapping("/nomeProducer")
@@ -41,11 +46,25 @@ public class ProducerController {
     }
 
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE, headers = "x-api-key")
-    public ResponseEntity<Producer> create(@RequestBody(required = false) Producer producer, @RequestHeader HttpHeaders headers) {
+    public ResponseEntity<ProducerGetResponse> create(@RequestBody(required = false) ProducerPostRequest producerPostRequest, @RequestHeader HttpHeaders headers) {
         log.info("{}", headers);
-        Long id = ThreadLocalRandom.current().nextLong(1, 1000);
-        Producer producer1 = new Producer(id, producer.getName());
-        Producer.addProducer(producer1);
-        return ResponseEntity.status(HttpStatus.CREATED).body(producer1);
+
+        var producer = Producer.builder()
+                            .id(ThreadLocalRandom.current().nextLong(100_000))
+                            .name(producerPostRequest.getName())
+                            .createdAt(LocalDateTime.now())
+                            .address(producerPostRequest.getAddress())
+                            .build();
+
+        Producer.addProducer(producer);
+
+        var response = ProducerGetResponse.builder()
+                            .id(producer.getId())
+                            .name(producer.getName())
+                            .createdAt(LocalDateTime.now())
+                            .address(producerPostRequest.getAddress())
+                            .build();
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 }
