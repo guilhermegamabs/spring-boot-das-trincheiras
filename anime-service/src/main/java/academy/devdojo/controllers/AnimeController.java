@@ -1,6 +1,12 @@
 package academy.devdojo.controllers;
 
+import academy.devdojo.mapper.AnimeMapper;
+import academy.devdojo.request.AnimePostRequest;
+import academy.devdojo.response.AnimeGetResponse;
+import academy.devdojo.response.AnimePostResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import academy.devdojo.domain.Anime;
 import java.util.List;
@@ -9,6 +15,7 @@ import java.util.List;
 @RestController
 @Slf4j
 public class AnimeController {
+    private static final AnimeMapper MAPPER = AnimeMapper.INSTANCE;
 
     @GetMapping("/nomeAnimes")
     public List<Anime> listAll() {
@@ -16,26 +23,37 @@ public class AnimeController {
     }
 
     @GetMapping("/filterList")
-    public List<Anime> listAllFiltered(@RequestParam String name) {
-       var animes = Anime.getAllAnimes();
-       if(name == null) return animes;
+    public ResponseEntity<List<AnimeGetResponse>> listAllFiltered(@RequestParam String name) {
+        log.debug("Request to get  all Animes param name: {}", name);
+        var animes = Anime.getAllAnimes();
 
-       return animes.stream()
-               .filter(anime -> anime.getName().equalsIgnoreCase(name))
-               .toList();
+        var animeGetResponseList = MAPPER.toAnimeGetResponseList(animes);
+        if(name == null) return ResponseEntity.ok(animeGetResponseList);
+
+        var response = animeGetResponseList.stream().filter(anime -> anime.getName().equalsIgnoreCase(name)).toList();
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("{id}")
-    public Anime findById(@PathVariable Long id) {
-        return Anime.getAllAnimes()
+    public ResponseEntity<AnimeGetResponse> findById(@PathVariable Long id) {
+
+        log.debug("Request to get Anime : {}", id);
+        var animeGetResponse =  Anime.getAllAnimes()
                 .stream()
                 .filter(anime -> anime.getId().equals(id))
-                .findFirst().orElse(null);
+                .findFirst()
+                .map(MAPPER::toAnimeGetResponse)
+                .orElse(null);
 
+        return ResponseEntity.ok(animeGetResponse);
     }
 
     @PostMapping
-    public Anime createAnime(@RequestBody(required = false) Anime anime) {
-        return Anime.addAnime(anime.getName());
+    public ResponseEntity<AnimePostResponse> createAnime(@RequestBody(required = false) AnimePostRequest request) {
+        log.debug("Request to create Anime : {}", request);
+        var anime = MAPPER.toAnime(request);
+        Anime.addAnime(anime.getName());
+        var response = MAPPER.toAnimePostResponse(anime);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 }
