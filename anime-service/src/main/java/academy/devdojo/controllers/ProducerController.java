@@ -27,22 +27,25 @@ public class ProducerController {
     }
 
     @GetMapping("/filterList")
-    public List<Producer> listAllFiltered(@RequestParam String name) {
+    public ResponseEntity<List<Producer>> listAllFiltered(@RequestParam String name) {
        var producers = Producer.getAllProducers();
-       if(name == null) return producers;
+       if(name == null) return ResponseEntity.ok(producers);
 
-       return producers.stream()
+       var response = producers.stream()
                .filter(producer -> producer.getName().equalsIgnoreCase(name))
                .toList();
+
+       return ResponseEntity.ok(response);
     }
 
     @GetMapping("{id}")
-    public Producer findById(@PathVariable Long id) {
-        return Producer.getAllProducers()
-                .stream()
-                .filter(producer -> producer.getId().equals(id))
-                .findFirst().orElse(null);
+    public ResponseEntity<Producer> findById(@PathVariable Long id) {
+        var response =  Producer.getAllProducers()
+                    .stream()
+                    .filter(producer -> producer.getId().equals(id))
+                    .findFirst().orElse(null);
 
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE, headers = "x-api-key")
