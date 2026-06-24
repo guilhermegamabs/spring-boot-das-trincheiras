@@ -2,6 +2,7 @@ package academy.devdojo.controllers;
 
 import academy.devdojo.mapper.AnimeMapper;
 import academy.devdojo.request.AnimePostRequest;
+import academy.devdojo.request.AnimePutRequest;
 import academy.devdojo.response.AnimeGetResponse;
 import academy.devdojo.response.AnimePostResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -71,6 +72,22 @@ public class AnimeController {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Anime not Found"));
 
         Anime.getAllAnimes().remove(animeToDelete);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping
+    public ResponseEntity<Void> update(@RequestBody AnimePutRequest request) {
+        log.debug("Request to delete Anime : {}", request);
+
+        var animeToRemove = Anime.getAllAnimes()
+                .stream()
+                .filter(anime -> anime.getId().equals(request.getId()))
+                .findFirst()
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Anime not Found"));
+        var animeUpdated = MAPPER.toAnime(request);
+        Anime.getAllAnimes().remove(animeToRemove);
+        Anime.getAllAnimes().add(animeUpdated);
+
         return ResponseEntity.noContent().build();
     }
 }
