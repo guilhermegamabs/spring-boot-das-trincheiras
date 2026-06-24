@@ -9,6 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import academy.devdojo.domain.Anime;
+import org.springframework.web.server.ResponseStatusException;
+
 import java.util.List;
 
 @RequestMapping("v1/animes")
@@ -43,7 +45,7 @@ public class AnimeController {
                 .filter(anime -> anime.getId().equals(id))
                 .findFirst()
                 .map(MAPPER::toAnimeGetResponse)
-                .orElse(null);
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Anime not Found"));
 
         return ResponseEntity.ok(animeGetResponse);
     }
@@ -54,6 +56,7 @@ public class AnimeController {
         var anime = MAPPER.toAnime(request);
         Anime.addAnime(anime.getName());
         var response = MAPPER.toAnimePostResponse(anime);
+
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 }
