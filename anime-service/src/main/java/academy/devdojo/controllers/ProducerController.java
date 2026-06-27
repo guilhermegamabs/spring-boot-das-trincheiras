@@ -1,7 +1,6 @@
 package academy.devdojo.controllers;
 
 import academy.devdojo.domain.Producer;
-import academy.devdojo.request.AnimePutRequest;
 import academy.devdojo.request.ProducerPostRequest;
 import academy.devdojo.mapper.ProducerMapper;
 import academy.devdojo.request.ProducerPutRequest;
