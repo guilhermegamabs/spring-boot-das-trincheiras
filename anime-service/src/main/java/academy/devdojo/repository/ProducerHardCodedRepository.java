@@ -17,7 +17,7 @@ public class ProducerHardCodedRepository {
             PRODUCERS.addAll(List.of(producer1, producer2, producer3));
     }
 
-    public static List<Producer> findAll() {
+    public List<Producer> findAll() {
         return PRODUCERS;
     }
 

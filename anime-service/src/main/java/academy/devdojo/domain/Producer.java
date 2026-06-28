@@ -16,6 +16,7 @@ public class Producer {
     private Long id;
     @JsonProperty("name")
     private String name;
+    @Setter
     private LocalDateTime createdAt;
     private String address;
 }
