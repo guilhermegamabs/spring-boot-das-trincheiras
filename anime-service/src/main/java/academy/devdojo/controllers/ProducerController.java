@@ -5,7 +5,9 @@ import academy.devdojo.mapper.ProducerMapper;
 import academy.devdojo.request.ProducerPutRequest;
 import academy.devdojo.response.ProducerGetResponse;
 import academy.devdojo.service.ProducerService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -17,13 +19,10 @@ import java.util.List;
 @RequestMapping("v1/producers")
 @RestController
 @Slf4j
+@RequiredArgsConstructor
 public class ProducerController {
     private static final ProducerMapper MAPPER = ProducerMapper.INSTANCE;
-    private ProducerService producerService;
-
-    public ProducerController() {
-        this.producerService = new ProducerService();
-    }
+    private final ProducerService producerService;
 
     @GetMapping("/listAll")
     public ResponseEntity<List<ProducerGetResponse>> findAll(@RequestParam(required = false) String name) {
@@ -48,7 +47,7 @@ public class ProducerController {
         log.debug("Request received to create producer, param name '{}'", producerPostRequest.getName());
         var producer = MAPPER.toProducer(producerPostRequest);
         var producerSaved = producerService.save(producer);
-        var producerGetResponse = MAPPER.toProducerPostResponse(producerSaved);
+        var producerGetResponse = MAPPER.toProducerGetResponse(producerSaved);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(producerGetResponse);
     }

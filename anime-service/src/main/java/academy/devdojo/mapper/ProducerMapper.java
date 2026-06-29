@@ -23,7 +23,6 @@ public interface ProducerMapper {
     Producer toProducer(ProducerPutRequest producerPutRequest);
 
     ProducerGetResponse toProducerGetResponse(Producer producer);
-    ProducerGetResponse toProducerPostResponse(Producer producer);
 
     List<ProducerGetResponse> toProducerGetResponseList(List<Producer> producerList);
 }
