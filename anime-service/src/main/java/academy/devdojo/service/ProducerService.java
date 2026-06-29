@@ -35,11 +35,6 @@ public class ProducerService {
     public void update(Producer producerToUpdate) {
         var producerToDelete = findById(producerToUpdate.getId());
         producerToUpdate.setCreatedAt(producerToDelete.getCreatedAt());
-        repository.delete(producerToDelete);
-        repository.save(producerToUpdate);
-    }
-
-    public void assertProducerExists(Long id) {
-        findById(id);
+        repository.update(producerToUpdate);
     }
 }
