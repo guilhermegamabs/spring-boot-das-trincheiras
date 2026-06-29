@@ -3,9 +3,11 @@ package academy.devdojo.service;
 import academy.devdojo.domain.Producer;
 import academy.devdojo.repository.ProducerHardCodedRepository;
 import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 
+@Service
 public class ProducerService {
     private ProducerHardCodedRepository repository;
 
@@ -37,5 +39,9 @@ public class ProducerService {
         producerToUpdate.setCreatedAt(producerToDelete.getCreatedAt());
         repository.delete(producerToDelete);
         repository.save(producerToUpdate);
+    }
+
+    public void assertProducerExists(Long id) {
+        findById(id);
     }
 }

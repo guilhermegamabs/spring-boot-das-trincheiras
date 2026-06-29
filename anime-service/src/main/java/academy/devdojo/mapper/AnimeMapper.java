@@ -19,8 +19,8 @@ public interface AnimeMapper {
     Anime toAnime(AnimePostRequest animePostRequest);
     Anime toAnime(AnimePutRequest request);
 
+    AnimeGetResponse toAnimeGetResponse(Anime anime);
     AnimePostResponse toAnimePostResponse(Anime anime);
 
-    AnimeGetResponse toAnimeGetResponse(Anime anime);
     List<AnimeGetResponse> toAnimeGetResponseList(List<Anime> animes);
 }

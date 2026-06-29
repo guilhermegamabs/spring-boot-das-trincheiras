@@ -1,19 +1,16 @@
 package academy.devdojo.controllers;
 
-import academy.devdojo.domain.Producer;
 import academy.devdojo.request.ProducerPostRequest;
 import academy.devdojo.mapper.ProducerMapper;
 import academy.devdojo.request.ProducerPutRequest;
 import academy.devdojo.response.ProducerGetResponse;
 import academy.devdojo.service.ProducerService;
-import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -29,7 +26,7 @@ public class ProducerController {
     }
 
     @GetMapping("/listAll")
-    public ResponseEntity<List<ProducerGetResponse>> listAll(@RequestParam(required = false) String name) {
+    public ResponseEntity<List<ProducerGetResponse>> findAll(@RequestParam(required = false) String name) {
         log.debug("Request received to list all producers, param name '{}'", name);
         var producers = producerService.findAll(name);
         var producerGetResponses = MAPPER.toProducerGetResponseList(producers);
@@ -51,7 +48,7 @@ public class ProducerController {
         log.debug("Request received to create producer, param name '{}'", producerPostRequest.getName());
         var producer = MAPPER.toProducer(producerPostRequest);
         var producerSaved = producerService.save(producer);
-        var producerGetResponse = MAPPER.toProducerGetResponse(producerSaved);
+        var producerGetResponse = MAPPER.toProducerPostResponse(producerSaved);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(producerGetResponse);
     }
